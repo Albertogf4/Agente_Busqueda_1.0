@@ -1,5 +1,5 @@
 env/
-___pycache__/
+__pycache__/
 static/
 .env
 searchAgent.ipynb
