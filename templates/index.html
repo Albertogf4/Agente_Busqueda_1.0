@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente IA de Búsqueda</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { background-color: #EBF8FF; }
+        .card { background-color: white; }
+        .card-header { background-color: #3182CE; }
+        .markdown-body h1 { font-size: 1.5em; font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; }
+        .markdown-body h2 { font-size: 1.25em; font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; }
+        .markdown-body p { margin-bottom: 0.5em; }
+        .markdown-body ul, .markdown-body ol { margin-left: 1.5em; margin-bottom: 0.5em; }
+        .markdown-body li { margin-bottom: 0.25em; }
+        .markdown-body code { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace; }
+        .markdown-body pre { background-color: #f0f0f0; padding: 1em; border-radius: 5px; overflow-x: auto; }
+        .markdown-body pre code { background-color: transparent; padding: 0; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="bg-blue-600 text-white p-6">
+            <h1 class="text-2xl font-bold">Agente IA de Búsqueda</h1>
+            <p class="text-blue-100">¿Cómo puedo asistirte hoy?</p>
+        </div>
+        <div class="p-6">
+            <form id="searchForm" class="space-y-4">
+                <input type="text" id="query" placeholder="Introduce tu pregunta..." 
+                       class="w-full p-2 border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Buscar
+                </button>
+            </form>
+        </div>
+        <div id="result" class="bg-blue-50 p-6 rounded-b-lg hidden">
+            <h3 class="text-lg font-semibold text-blue-800 mb-2">Respuesta:</h3>
+            <div id="resultText" class="text-gray-700 whitespace-pre-wrap markdown-body"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const query = document.getElementById('query').value;
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            const resultDiv = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+
+            submitButton.textContent = 'Buscando...';
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query }),
+                });
+                const data = await response.json();
+                resultText.innerHTML = marked.parse(data.result);
+                resultDiv.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error:', error);
+                resultText.textContent = 'An error occurred while processing your request.';
+                resultDiv.classList.remove('hidden');
+            } finally {
+                submitButton.textContent = 'Buscar';
+                submitButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+env/
+___pycache__/
+static/
+.env
+searchAgent.ipynb
+UI.py
