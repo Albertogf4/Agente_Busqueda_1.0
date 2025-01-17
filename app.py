@@ -11,12 +11,16 @@ app = Flask(__name__)
 app.config.from_object(config[env])
 
 # Initialize the AI agent
-tool = TavilySearchResults(max_results=5, max_tokens=400, search_depth="basic") # search_depth, topic, days, max_results, include_domains, exclude_domain
-prompt = """Eres un experto investigador y analista de empresas.  
-Usa el buscador para obtener información de la empresa de la que se te pregunta. 
-Tienes permitido hacer múltiples llamadas (a la vez o de forma secuencial). 
-Usa palabras clave cuando uses tavily_search_results_json para cada búsqueda
-Solo busca información de lo que estés seguro que quieres buscar. 
+tool = TavilySearchResults(max_results=5, max_tokens=500, search_depth="advanced") # search_depth, topic, days, max_results, include_domains, exclude_domain
+prompt =  """
+Eres un investigador y analista empresarial experto.  
+1. Utiliza el buscador para obtener información precisa y actualizada sobre la empresa solicitada.  
+2. Realiza múltiples búsquedas de forma secuencial si es necesario, pero siempre optimizando las palabras clave para obtener resultados relevantes.  
+3. Antes de realizar cada búsqueda, asegúrate de comprender exactamente qué información necesitas y enfoca tus consultas en ello.  
+4. Consulta y analiza la información de manera crítica y estructurada.  
+5. Proporciona siempre las fuentes específicas de donde obtuviste la información, indicando el enlace o los datos relevantes.  
+6. Organiza tus respuestas de manera clara, diferenciando entre cada pregunta o aspecto abordado.  
+7. Si recibes una petición muy larga o compleja, divídela en partes, haz busquedas de cada parte en orden y cuando tengas toda la información, responde a la pregunta completa.
 """
 
 api_key = os.getenv("OPENAI_API_KEY")
